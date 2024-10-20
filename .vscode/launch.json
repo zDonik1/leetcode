@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "number_of_atoms",
+            "stdio": [ "input.txt", null ],
+            "preLaunchTask": "Compile",
+            "expressions": "native",
+            "program": "${workspaceFolder}/build/debug/leetcode_cpp",
+            "args": [ "--source-file=*number_of_atoms.cpp" ]
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+help:
+    just -l
+
+alias gen := gen-rel
+alias bld := bld-rel
+alias run := run-rel
+alias run-all := run-all-rel
+
+CURRENT_TEST := "number_of_atoms.cpp"
+
+# generate release project files
+gen-rel:
+    cmake -B build/release -D CMAKE_BUILD_TYPE=Release
+
+# generate debug project files
+gen-dbg:
+    cmake -B build/debug -D CMAKE_BUILD_TYPE=Debug
+
+# build release project
+bld-rel:
+    cmake --build build/release
+
+# build debug project
+bld-dbg:
+    cmake --build build/debug
+
+# run release project
+run-rel *ARGS: bld-rel
+    build/release/leetcode_cpp -sf=*{{ CURRENT_TEST }} {{ ARGS }}
+
+# run debug project
+run-dbg *ARGS: bld-dbg
+    build/debug/leetcode_cpp {{ ARGS }}
+
+# run all tests in release project
+run-all-rel *ARGS: bld-rel
+    build/release/leetcode_cpp {{ ARGS }}
