@@ -6,8 +6,6 @@
 #include <map>
 #include <vector>
 
-#include "doctest.h"
-
 using namespace std;
 
 // 726. Number of Atoms
@@ -84,6 +82,8 @@ public:
                           });
     }
 };
+
+#include "doctest.h"
 
 TEST_CASE("simple")
 {
