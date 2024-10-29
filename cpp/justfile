@@ -6,7 +6,7 @@ alias bld := bld-rel
 alias run := run-rel
 alias run-all := run-all-rel
 
-CURRENT_TEST := "flip_equivalent_binary_trees.cpp"
+CURRENT_TEST := "regions_cut_by_slashes.cpp"
 
 # generate release project files
 gen-rel:
