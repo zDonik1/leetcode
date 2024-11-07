@@ -6,7 +6,7 @@ using namespace std;
 
 // 959. Regions Cut By Slashes
 // https://leetcode.com/problems/regions-cut-by-slashes
-// Solved in: in progress = 2:19:05.146
+// Solved in: 2:19:05.146
 
 enum PartitionDir { None, Pos, Neg };
 

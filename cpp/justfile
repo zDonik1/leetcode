@@ -6,7 +6,7 @@ alias bld := bld-rel
 alias run := run-rel
 alias run-all := run-all-rel
 
-CURRENT_TEST := "regions_cut_by_slashes.cpp"
+CURRENT_TEST := "minimum_number_of_days_to_disconnect_island.cpp"
 
 # generate release project files
 gen-rel:
