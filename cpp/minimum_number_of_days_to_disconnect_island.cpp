@@ -9,7 +9,7 @@ using namespace std;
 
 // 1568. Minimum Number of Days to Disconnect Island
 // https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island
-// Solved in: 31:03.566 + 1:01:57.000 + 0:17:00
+// Solved in: 03:00:37.678 (IN PROGRESS)
 
 class Solution
 {
@@ -62,10 +62,6 @@ public:
 
     int minDays(vector<vector<int>> &grid)
     {
-        auto const sizeSum = grid.size() + grid.front().size();
-        if (sizeSum <= 3) // 1x2 or 2x1 grid
-            return countLand(grid);
-
         // check if there are at least 2 islands already
         {
             auto waterFillGrid = grid;
@@ -85,6 +81,23 @@ public:
             }
         }
 
+        auto const landCount = [&grid] {
+            auto landCount = 0;
+            for (auto const row : grid) {
+                for (auto const cell : row) {
+                    if (cell == 1)
+                        ++landCount;
+
+                    if (landCount == 3)
+                        return 3;
+                }
+            }
+            return landCount;
+        }();
+
+        if (landCount <= 2)
+            return landCount;
+
         auto foundBridge = false;
         for (auto const row : views::iota(0u, grid.size())) {
             for (auto const col : views::iota(0u, grid.front().size())) {
@@ -99,40 +112,70 @@ public:
                     land.set(1);
                 if (checkCell(grid, row - 1, col) == 1)
                     land.set(2);
-                if (checkCell(grid, row - 1, col) == 1)
-                    land.set(2);
-                if (checkCell(grid, row, col - 1) == 1)
-                    land.set(2);
-                if (checkCell(grid, row + 1, col) == 1)
+                if (checkCell(grid, row - 1, col - 1) == 1)
                     land.set(3);
+                if (checkCell(grid, row, col - 1) == 1)
+                    land.set(4);
+                if (checkCell(grid, row + 1, col - 1) == 1)
+                    land.set(5);
+                if (checkCell(grid, row + 1, col) == 1)
+                    land.set(6);
+                if (checkCell(grid, row + 1, col + 1) == 1)
+                    land.set(7);
 
-                if (land.count() == 1)
+                if ((land & bitset<8> {0b01010101}).count() == 1)
                     return 1;
 
-                if ((land.count() == 2 && land[0] == land[2]) ||)
-                    foundBridge = true;
+                auto foundWater = false;
+                for (auto index : views::iota(0u, land.size())) {
+                    if (land[index] == 1)
+                        continue;
+
+                    if (foundWater) {
+                        foundBridge = true;
+                        break;
+                    }
+
+                    foundWater = true;
+
+                    // fill with land
+
+                    if (index == 0 && land[land.size() - 1] == 0) {
+                        for (auto fillIndex = land.size() - 1; fillIndex >= 0; --fillIndex) {
+                            if (land[fillIndex] == 1)
+                                break;
+                            land[fillIndex] = 1;
+                        }
+                    }
+
+                    for (auto fillIndex : views::iota(index, land.size())) {
+                        if (land[fillIndex] == 1)
+                            break;
+                        land[fillIndex] = 1;
+                    }
+                }
             }
         }
 
         {
             auto landFillGrid = grid;
-            auto wasFilled = false;
+            auto wasEdgeFilled = false;
+            auto wasInsideFilled = false;
             for (auto const row : views::iota(0u, landFillGrid.size())) {
                 for (auto const col : views::iota(0u, landFillGrid.front().size())) {
+                    if (wasEdgeFilled && wasInsideFilled)
+                        return 2;
+
                     auto const cell = landFillGrid[row][col];
                     if (cell == 1)
                         continue;
 
-                    if (wasFilled)
+                    if (wasInsideFilled) // inside was filled and found more water
                         return 2;
 
-                    if (!fill(landFillGrid, 1, row, col))
-                        wasFilled = true;
+                    (fill(landFillGrid, 1, row, col) ? wasEdgeFilled : wasInsideFilled) = true;
                 }
             }
-
-            if (wasFilled)
-                return 2;
         }
 
         return foundBridge ? 1 : 2;
@@ -217,4 +260,45 @@ TEST_CASE("failing test 4")
     };
     // clang-format on
     CHECK(Solution {}.minDays(grid) == 1);
+}
+
+TEST_CASE("failing test 5")
+{
+    // clang-format off
+    auto grid = vector<vector<int>> {
+        {0, 0, 0}, 
+        {0, 1, 0}, 
+        {0, 0, 0}
+    };
+    // clang-format on
+    CHECK(Solution {}.minDays(grid) == 1);
+}
+
+TEST_CASE("failing test 6")
+{
+    // clang-format off
+    auto grid = vector<vector<int>> {
+        {1, 1, 1, 1, 1, 1, 1}, 
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 1, 1, 1, 0, 1}, 
+        {1, 1, 1, 1, 1, 0, 1},
+        {1, 0, 1, 1, 1, 0, 1}, 
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1}
+    };
+    // clang-format on
+    CHECK(Solution {}.minDays(grid) == 1);
+}
+
+TEST_CASE("failing test 7")
+{
+    // clang-format off
+    auto grid = vector<vector<int>> {
+        {1, 1, 1, 1}, 
+        {1, 1, 0, 1}, 
+        {1, 1, 1, 1}, 
+        {1, 1, 1, 1}
+    };
+    // clang-format on
+    CHECK(Solution {}.minDays(grid) == 2);
 }
