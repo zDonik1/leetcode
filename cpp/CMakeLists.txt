@@ -15,6 +15,7 @@ set(SOURCE_FILES
     flip_equivalent_binary_trees.cpp
     regions_cut_by_slashes.cpp
     minimum_number_of_days_to_disconnect_island.cpp
-    defuse_the_bomb.cpp)
+    defuse_the_bomb.cpp
+    maximum_sum_of_distinct_subarrays_with_length_k.cpp)
 
 add_executable(leetcode_cpp ${SOURCE_FILES})
